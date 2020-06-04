@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:weather/src/models/city_model.dart';
 import 'package:weather/src/provider/remote.dart';
+import 'package:weather/src/widgets/card_swiper_widget.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -14,7 +15,7 @@ class _HomePageState extends State<HomePage> {
 
   String _city = "";
   String _selectedCity = "";
-  List<String> _cities;
+  List<City> _cities;
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +29,13 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             _getCity(),
             Divider(),
-            _createCities()
+            __createDropdown(_city)
           ],
         ),
     );
   }
 
-  Widget _createCity() {
+  Widget _getCity() {
     // Widget de input text
     return TextField(
         decoration: InputDecoration(
@@ -43,31 +44,28 @@ class _HomePageState extends State<HomePage> {
         // Guardar el input
         onChanged: (value) => setState(() {
           _city = value;
+          __createDropdown(_city);
         })
     );
   }
 
-  Widget _createCities() {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: DropdownButton<String>(
-            items: _cities.map((String value) {
-              return new DropdownMenuItem<String>(
-                value: value,
-                child: new Text(value),
-              );
-            }).toList(),
-            hint: Text(_selectedCity),
-            onChanged: (val) {
-              setState(() {
-                _selectedCity = val;
-                //_refreshAvatar();
-              });
-            },
-          ),
-        )
-      ],
+  Widget __createDropdown(String query) {
+    // Widget para recibir datos de forma asíncrona
+    return FutureBuilder(
+      future: provider.getCities(query), // Llamada a datos
+      builder: (BuildContext context, AsyncSnapshot<List> snapshot) { // Snapshot contiene los datos recibidos
+        if (snapshot.hasData) {
+          return CardSwiper(
+              cities: snapshot.data
+          );
+        } else {
+          return Container(
+              child: Center(
+                  child: CircularProgressIndicator()
+              )
+          );
+        }
+      },
     );
   }
   

@@ -5,13 +5,15 @@ import 'package:weather/src/models/city_model.dart';
 import 'package:weather/src/models/weather_model.dart';
 
 class RemoteCity {
+  String _url = "https://www.metaweather.com/api/"; // Inicio de la url de petición a la API
 
-  Future<City> getCities(query) async{
-    final response = await http.get("/api/location/search/?query=" + query);
+  Future<List<City>> getCities(String query) async {
+    final url = Uri.https(_url, "location/search/?query=" + query);
 
-    if(response.statusCode == 200){
-      return City.fromJson(json.decode(response.body));
-    } else throw Exception('Error retrieving data');
+    final response = await http.get(url); // Hacer la petición
+    final decodedData = json.decode(response.body);
+    final cities = new Cities.fromJsonList(decodedData["results"]); // Crear una lista de Cities con los datos recibidos
+    return cities.items;
   }
 
 }

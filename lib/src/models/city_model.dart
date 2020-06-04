@@ -1,14 +1,32 @@
-class City{
-  final String id;
-  final String name;
-
-  City({this.id, this.name});
-
-  factory City.fromJson(Map<String, dynamic> json){
-    return City(
-        id: json['woeid'],
-        name: json['title']
-    );
+class Cities {
+  List<City> items = new List();
+  Cities();
+  // Recorrer el json y crear instancias Movie con cada item recibido
+  Cities.fromJsonList(List<dynamic> jsonList) {
+    if (jsonList == null) {
+      return;
+    } else {
+      for (var item in jsonList) {
+        final city = new City.fromJsonMap(item);
+        items.add(city);
+      }
+    }
   }
+}
 
+class City {
+
+  String title;
+  String woeid;
+
+  City({
+    this.title,
+    this.woeid
+  });
+
+  // Mapear la City json a nuestra clase City
+  City.fromJsonMap(Map<String, dynamic> json) {
+    title = json['title'];
+    woeid = json['woeid'];
+  }
 }
