@@ -11,7 +11,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   // Cargar el provider
-  final provider = new RemoteCity();
+  final provider = new Remote();
 
   String _city = "";
   String _selectedCity = "";
@@ -29,7 +29,9 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             _getCity(),
             Divider(),
-            __createDropdown(_city)
+            Container(
+              child: _createSwiper(_city),
+            )
           ],
         ),
     );
@@ -44,12 +46,12 @@ class _HomePageState extends State<HomePage> {
         // Guardar el input
         onChanged: (value) => setState(() {
           _city = value;
-          __createDropdown(_city);
+          _createSwiper(_city);
         })
     );
   }
 
-  Widget __createDropdown(String query) {
+  Widget _createSwiper(String query) {
     // Widget para recibir datos de forma asíncrona
     return FutureBuilder(
       future: provider.getCities(query), // Llamada a datos
